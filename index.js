@@ -1,7 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-
 const app = express();
 
 // now set up global port config access//
@@ -22,22 +21,23 @@ app.post("/user/generateToken", (req, res) => {
         password: "admin"
     }
 
-    const token = jwt.sign(data, jwtSecretKey);
+    let token = jwt.sign(data, jwtSecretKey);
     res.send(token);
+    return app.get;
 });
 
 // the verification of jwt
-app.get("/user/validateToken", (req, res) => {
+app.get("/user/abc", (req, res) => {
     // Tokens are generally passed in header of request
     // Due to security reasons.
-    let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
+    console.log("api is correct");
     let jwtSecretKey = process.env.JWT_SECRET_KEY;
-
+    let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
     try {
-        const token = req.header(tokenHeaderKey);
-
-        const verified = jwt.verify(token, jwtSecretKey);
-
+        let token = req.header(tokenHeaderKey);
+        token = req.headers.authorization;
+        console.log(token);
+        let verified = jwt.verify(token, jwtSecretKey);
         if (verified) {
             return res.send("Successfully Verified");
         } else {
@@ -45,7 +45,30 @@ app.get("/user/validateToken", (req, res) => {
             return res.status(401).send(error);
         }
     } catch (error) {
+        console.log(error);
         // Access Denied
         return res.status(401).send(error);
     }
 });
+
+
+// if (token) {
+//     token = token.split('bearer')[1];
+//     console.log("middleware called if", token);
+//     jwt.verify(token, jwtSecretKey, (error, valid) => {
+//         if (error) {
+//             return res.send("Successfully Verified");
+//         } else {
+//             next();
+
+//         }
+
+//     })
+// } else {
+//     console.log(error);
+//     return res.status(401).send(error);
+// }
+// console.log("token verified", token);
+//  req.headers.authorization.split('Bearer');
+//      console.log(verify);
+
